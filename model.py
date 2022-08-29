@@ -256,11 +256,11 @@ def build_model(input_shape):
     e4 = make_block_basic(e3, filters = n_filters[3], stride=2, groups=2, radix=4)          # (batch, 32, 32, 128)
 
     ## Bridge
-    b1 = PAM()(e4)        # b1: (batch_size, 32, 32, filters)
-    b2 = PAM()(b1)        # b1: (batch_size, 32, 32, filters)
+    b1 = dual_attention(e4)        # b1: (batch_size, 32, 32, filters)
+    #b2 = PAM()(b1)        # b1: (batch_size, 32, 32, filters)
 
     ## Decoder
-    d1 = UpSampling2D((2, 2))(b2)     # (batch, 64, 64, 128)
+    d1 = UpSampling2D((2, 2))(b1)     # (batch, 64, 64, 128)
     d1 = Concatenate()([d1, e3])      # (batch, 64, 64, 192)
 
     d1 = make_block_basic(d1, filters = n_filters[3])   # (batch, 64, 64, 128)
